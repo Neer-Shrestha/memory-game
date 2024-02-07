@@ -8,64 +8,66 @@
   </head>
   <body>
     <div class="container">
-      <form class="option-form">
-        <div class="group">
+      <div class="game_wrapper">
+        <form class="option-form">
           <strong>Number of players</strong>
+          <div class="group">
+            <label>
+              <input type="radio" name="players" value="2" checked />
+              <span>2</span>
+            </label>
+            <label>
+              <input type="radio" name="players" value="3" />
+              <span> 3</span>
+            </label>
+            <label>
+              <input type="radio" name="players" value="4" />
+              <span>4</span>
+            </label>
+          </div>
           <br />
-          <label>
-            <input type="radio" name="players" value="2" checked />
-            2
-          </label>
-          <label>
-            <input type="radio" name="players" value="3" />
-            3
-          </label>
-          <label>
-            <input type="radio" name="players" value="4" />
-            4
-          </label>
-        </div>
-        <div class="group">
           <strong>Grid size</strong>
-          <br />
-          <label>
-            <input type="radio" name="grid_size" value="4" checked />
-            4 x 4
-          </label>
-          <label>
-            <input type="radio" name="grid_size" value="6" />
-            6 x 6
-          </label>
-          <label>
-            <input type="radio" name="grid_size" value="8" />
-            8 x 8
-          </label>
+          <div class="group">
+            <label>
+              <input type="radio" name="grid_size" value="4" checked />
+              <span>4 x 4</span>
+            </label>
+            <label>
+              <input type="radio" name="grid_size" value="6" />
+              <span>6 x 6</span>
+            </label>
+            <label>
+              <input type="radio" name="grid_size" value="8" />
+              <span>8 x 8</span>
+            </label>
+          </div>
+          <button class="btn btn-primary btn-submit" type="submit">
+            Start Game
+          </button>
+        </form>
+
+        <div class="game-board hide">
+          <div class="header">
+            <strong>Memory</strong>
+
+            <div class="btn_wrap">
+              <button class="btn btn-primary btn-restart">Restart</button>
+              <button class="btn btn-light btn-new">New Game</button>
+            </div>
+          </div>
+          <div class="flex-center">
+            <div class="grid"></div>
+          </div>
+          <div class="footer"></div>
         </div>
-        <button type="submit">Start Game</button>
-      </form>
 
-      <div class="game-board hide">
-        <div class="header">
-          <strong>Memory</strong>
-
+        <div class="result hide">
+          <h2></h2>
+          <span>Game over here are the results...</span>
+          <div class="details"></div>
           <button class="btn-restart">Restart</button>
           <button class="btn-new">New Game</button>
         </div>
-        <div class="grid"></div>
-        <div class="footer"></div>
-      </div>
-
-      <div class="result hide">
-        <h2>Player 3 Wins!</h2>
-        <span>Game over here are the results...</span>
-        <div class="details">
-          <div class="item winner">Player 1 <span>8 pair</span></div>
-          <div class="item">Player 1 <span>8 pair</span></div>
-          <div class="item">Player 1 <span>8 pair</span></div>
-          <div class="item">Player 1 <span>8 pair</span></div>
-        </div>
-        <button class="btn-restart">Restart</button>
-        <button class="btn-new">New Game</button>
       </div>
     </div>
 
