@@ -1,5 +1,4 @@
 window.addEventListener("DOMContentLoaded", () => {
-  const MAX_CLICK = 2;
   let PLAYERS_COUNT,
     GRID,
     PLAYERS,
@@ -48,6 +47,7 @@ window.addEventListener("DOMContentLoaded", () => {
     const size = GRID * GRID;
 
     board.classList.add(`col-${GRID}`);
+    CLICK_COUNT = 0;
     clearBoard();
     clearStack();
     initBoard(size);
@@ -77,10 +77,6 @@ window.addEventListener("DOMContentLoaded", () => {
       const button = document.createElement("button");
 
       button.addEventListener("click", (e) => {
-        if (CLICK_COUNT == MAX_CLICK) {
-          e.preventDefault();
-        }
-
         button.innerHTML = num;
         button.classList.add("active");
         button.classList.add("disabled");
@@ -145,10 +141,8 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 
   function calculateWinPercent(currentPlayer) {
-    currentPlayer.win_percent =
-      ((currentPlayer.correct - currentPlayer.incorrect) /
-        currentPlayer.num_of_click) *
-      100;
+    currentPlayer.correct_percent =
+      (currentPlayer.correct / currentPlayer.num_of_click) * 100;
   }
 
   function checkOver() {
@@ -169,7 +163,7 @@ window.addEventListener("DOMContentLoaded", () => {
     const result = document.querySelector(".result");
     const details = result.querySelector(".details");
 
-    const winPercentArr = PLAYERS.map((player) => player.win_percent);
+    const winPercentArr = PLAYERS.map((player) => player.correct_percent);
     const maxCorrect = Math.max(...winPercentArr);
     const winnerIndex = winPercentArr.indexOf(maxCorrect);
     let secondMaxCorrectIndex = winPercentArr.indexOf(
@@ -197,7 +191,9 @@ window.addEventListener("DOMContentLoaded", () => {
         item.classList.add("winner");
       }
 
-      item.innerHTML = `${player.name} <span>${player.correct} Pair<br> ${player.win_percent}% Win rate</span>`;
+      item.innerHTML = `${player.name} <span>${
+        player.correct
+      } Pair<br> ${player.correct_percent.toFixed(2)}% Win rate</span>`;
 
       details.appendChild(item);
     });
@@ -245,7 +241,7 @@ window.addEventListener("DOMContentLoaded", () => {
       num_of_click: 0,
       correct: 0,
       incorrect: 0,
-      win_percent: 0,
+      correct_percent: 0,
     }));
 
     footer.innerHTML = "";
