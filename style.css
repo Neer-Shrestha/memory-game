@@ -60,47 +60,11 @@ body {
   grid-template-columns: repeat(8, 50px);
 }
 
-.footer {
-  display: flex;
-}
-.footer span {
-  flex: 1;
-  padding: 10px;
-  background-color: gray;
-  color: white;
-}
-.footer span.active {
-  background-color: yellow;
-}
-
-.details {
-  display: flex;
-  flex-flow: column;
-  gap: 10px;
-}
-
-.item {
-  background-color: rgba(0 0 0 / 30%);
-  border-radius: 10px;
-  padding: 10px 15px;
-}
-.item.winner {
-  background-color: turquoise;
-}
-
 .disabled {
   pointer-events: none;
 }
 .hide {
-  display: none;
-}
-button.active {
-  background-color: black;
-  color: white;
-}
-button.match {
-  background-color: green;
-  color: white;
+  display: none !important;
 }
 
 .game_wrapper {
@@ -168,11 +132,16 @@ button.match {
   width: 100%;
 }
 
+.game-board {
+  display: flex;
+  flex-flow: column;
+  gap: 50px;
+}
+
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 50px;
 }
 
 .grid button {
@@ -189,4 +158,40 @@ button.match {
 .grid button.match {
   --_bg: var(--clr-gray);
   color: var(--clr-secondary);
+}
+
+.footer {
+  display: flex;
+  gap: 10px;
+}
+
+.player {
+  color: var(--clr-secondary);
+  background-color: var(--clr-gray);
+  padding: 10px 20px;
+  flex: 1;
+  font-weight: 600;
+  display: flex;
+  justify-content: space-between;
+  border-radius: 5px;
+}
+.player.active {
+  background-color: var(--clr-primary);
+  color: var(--clr-light);
+}
+
+.details {
+  display: flex;
+  flex-flow: column;
+  gap: 10px;
+}
+
+.item {
+  background-color: rgba(0 0 0 / 30%);
+  border-radius: 10px;
+  padding: 10px 15px;
+}
+.item.winner {
+  background-color: var(--clr-secondary);
+  color: var(--clr-light);
 }
