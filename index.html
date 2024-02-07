@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Memory game</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <form class="option-form">
+        <div class="group">
+          <strong>Number of players</strong>
+          <br />
+          <label>
+            <input type="radio" name="players" value="2" checked />
+            2
+          </label>
+          <label>
+            <input type="radio" name="players" value="3" />
+            3
+          </label>
+          <label>
+            <input type="radio" name="players" value="4" />
+            4
+          </label>
+        </div>
+        <div class="group">
+          <strong>Grid size</strong>
+          <br />
+          <label>
+            <input type="radio" name="grid_size" value="4" checked />
+            4 x 4
+          </label>
+          <label>
+            <input type="radio" name="grid_size" value="6" />
+            6 x 6
+          </label>
+          <label>
+            <input type="radio" name="grid_size" value="8" />
+            8 x 8
+          </label>
+        </div>
+        <button type="submit">Start Game</button>
+      </form>
+
+      <div class="game-board hide">
+        <div class="header">
+          <strong>Memory</strong>
+
+          <button class="btn-restart">Restart</button>
+          <button class="btn-new">New Game</button>
+        </div>
+        <div class="grid"></div>
+        <div class="footer"></div>
+      </div>
+
+      <div class="result hide">
+        <h2>Player 3 Wins!</h2>
+        <span>Game over here are the results...</span>
+        <div class="details">
+          <div class="item winner">Player 1 <span>8 pair</span></div>
+          <div class="item">Player 1 <span>8 pair</span></div>
+          <div class="item">Player 1 <span>8 pair</span></div>
+          <div class="item">Player 1 <span>8 pair</span></div>
+        </div>
+        <button class="btn-restart">Restart</button>
+        <button class="btn-new">New Game</button>
+      </div>
+    </div>
+
+    <script src="./script.js" defer></script>
+  </body>
+</html>

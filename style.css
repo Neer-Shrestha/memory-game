@@ -1,0 +1,83 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+body {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.container {
+  flex-grow: 1;
+  max-width: 500px;
+  margin: 0 auto;
+  display: flex;
+  flex-flow: column;
+  gap: 10px;
+}
+.grid {
+  display: grid;
+  gap: 10px;
+}
+.grid * {
+  padding: 5px;
+  border-radius: 50%;
+  aspect-ratio: 1;
+}
+
+.col-4 {
+  grid-template-columns: repeat(4, 50px);
+}
+.col-6 {
+  grid-template-columns: repeat(6, 50px);
+}
+.col-8 {
+  grid-template-columns: repeat(8, 50px);
+}
+
+.footer {
+  display: flex;
+}
+.footer span {
+  flex: 1;
+  padding: 10px;
+  background-color: gray;
+  color: white;
+}
+.footer span.active {
+  background-color: yellow;
+}
+
+.details {
+  display: flex;
+  flex-flow: column;
+  gap: 10px;
+}
+
+.item {
+  background-color: rgba(0 0 0 / 30%);
+  border-radius: 10px;
+  padding: 10px 15px;
+}
+.item.winner {
+  background-color: turquoise;
+}
+
+.disabled {
+  pointer-events: none;
+}
+.hide {
+  display: none;
+}
+button.active {
+  background-color: black;
+  color: white;
+}
+button.match {
+  background-color: green;
+  color: white;
+}
