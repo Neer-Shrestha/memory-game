@@ -121,6 +121,9 @@ window.addEventListener("DOMContentLoaded", () => {
 
       currentPlayer.correct += 1;
       calculateWinPercent(currentPlayer);
+      document.querySelector(
+        `.player[data-id="${CURRENT_PLAYER_ID}"] strong`
+      ).textContent = currentPlayer.correct;
       checkOver();
     } else {
       board.classList.add("disabled");
@@ -249,9 +252,12 @@ window.addEventListener("DOMContentLoaded", () => {
 
     PLAYERS.forEach((player) => {
       const player_element = document.createElement("span");
+      const score = document.createElement("strong");
+      score.innerHTML = player.correct;
       player_element.setAttribute("data-id", player.id);
       player_element.innerHTML = player.name;
       player_element.classList.add("player");
+      player_element.appendChild(score);
 
       footer.appendChild(player_element);
     });
