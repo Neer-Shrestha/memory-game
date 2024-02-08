@@ -24,6 +24,7 @@ window.addEventListener("DOMContentLoaded", () => {
       GRID = parseInt(
         optionForm.querySelector('[name="grid_size"]:checked')?.value
       );
+      board.parentElement.classList.remove(`disabled`);
 
       startGame(PLAYERS_COUNT, GRID);
     });
@@ -83,6 +84,7 @@ window.addEventListener("DOMContentLoaded", () => {
       const button = document.createElement("button");
 
       button.addEventListener("click", (e) => {
+        let exitsInArray = false;
         button.innerHTML = num;
         button.classList.add("active");
         button.classList.add("disabled");
@@ -94,7 +96,16 @@ window.addEventListener("DOMContentLoaded", () => {
 
         STACK.push(stackData);
 
-        updateCpuMemory(stackData);
+        CPU_MEMORY.forEach((memory) => {
+          if (memory.index == stackData.index && memory.num == stackData.num) {
+            exitsInArray = true;
+            return;
+          }
+        });
+
+        if (!exitsInArray) {
+          updateCpuMemory(stackData);
+        }
 
         if (STACK.length == 2) {
           checkMatch();
@@ -112,15 +123,17 @@ window.addEventListener("DOMContentLoaded", () => {
       (currentPlayer.correct / currentPlayer.num_of_click) * 100;
   }
 
-  function checkOver() {
+  function isOver() {
     const correctArr = PLAYERS.map((player) => player.correct);
     const totalCorrect = correctArr.reduce(
       (total, value, _i, arr) => total + value
     );
 
     if (totalCorrect == (GRID * GRID) / 2) {
-      showResult();
+      return true;
     }
+
+    return false;
   }
 
   function showResult() {
@@ -189,29 +202,32 @@ window.addEventListener("DOMContentLoaded", () => {
 
   function checkIfCPU() {
     if (PLAYERS[CURRENT_PLAYER_ID - 1].name == "CPU") {
-      board.classList.add("disabled");
+      board.parentElement.classList.add("disabled");
 
       cpuTurn();
+    } else {
+      board.parentElement.classList.remove("disabled");
     }
   }
 
   function cpuTurn() {
     let cpuClickCount = 0;
+    const pairElements = checkPair();
     const interval = setInterval(() => {
       if (cpuClickCount == 1) {
-        const isFound = false;
+        let isFound = false;
+        let foundIndex = null;
 
         CPU_MEMORY.forEach((memory) => {
           if (memory.num == STACK[0].num && memory.index != STACK[0].index) {
-            console.log(memory);
-            cpuClick(memory.index);
             isFound = true;
+            foundIndex = memory.index;
           }
         });
 
-        console.log(isFound);
-
-        if (!isFound) {
+        if (isFound) {
+          cpuClick(foundIndex);
+        } else {
           cpuClick();
         }
 
@@ -221,6 +237,16 @@ window.addEventListener("DOMContentLoaded", () => {
         cpuClickCount += 1;
       }
     }, 500);
+    setTimeout(() => {
+      clearInterval(interval);
+    }, 1000);
+  }
+
+  function checkPair() {
+    const memory_nums = CPU_MEMORY.map((memory) => memory.num);
+    const memory_index = CPU_MEMORY.map((memory) => memory.index);
+
+    return [];
   }
 
   function checkMatch() {
@@ -247,7 +273,9 @@ window.addEventListener("DOMContentLoaded", () => {
         `.player[data-id="${CURRENT_PLAYER_ID}"] strong`
       ).textContent = currentPlayer.correct;
       checkIfCPU();
-      checkOver();
+      if (isOver()) {
+        showResult();
+      }
     } else {
       board.classList.add("disabled");
       setTimeout(() => {
@@ -272,22 +300,25 @@ window.addEventListener("DOMContentLoaded", () => {
   }
 
   function cpuClick(index = null) {
+    if (isOver()) {
+      return;
+    }
+
     if (index != null) {
-      const button = document.querySelectorAll(
-        `.grid button:nth-child(${index})`
+      const button = document.querySelector(
+        `.grid button:nth-child(${index + 1})`
       );
+
       button.click();
     } else {
       const buttons = document.querySelectorAll(
-        ".grid button:not(.active):not(.match)"
+        ".grid button:not(.active):not(.disabled)"
       );
 
       const cpu_click_element = getRandomNumber(buttons.length - 1);
 
       buttons[cpu_click_element].click();
     }
-
-    console.log("runned");
   }
 
   function suffleArray(arr) {
