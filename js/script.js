@@ -218,10 +218,11 @@ window.addEventListener("DOMContentLoaded", () => {
         let isFound = false;
         let foundIndex = null;
 
-        CPU_MEMORY.forEach((memory) => {
+        CPU_MEMORY.forEach((memory, _i) => {
           if (memory.num == STACK[0].num && memory.index != STACK[0].index) {
             isFound = true;
             foundIndex = memory.index;
+            CPU_MEMORY.splice(_i, 1);
           }
         });
 
@@ -309,7 +310,11 @@ window.addEventListener("DOMContentLoaded", () => {
         `.grid button:nth-child(${index + 1})`
       );
 
-      button.click();
+      if (button.classList.contains("disabled")) {
+        cpuClick();
+      } else {
+        button.click();
+      }
     } else {
       const buttons = document.querySelectorAll(
         ".grid button:not(.active):not(.disabled)"
