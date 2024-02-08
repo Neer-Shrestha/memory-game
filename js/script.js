@@ -1,6 +1,9 @@
 window.addEventListener("DOMContentLoaded", () => {
   let PLAYERS_COUNT,
+    IS_SOLO = false,
+    CPU_MEMORY = [],
     GRID,
+    GRID_SIZE,
     PLAYERS,
     STACK = [],
     CLICK_COUNT = 0,
@@ -21,6 +24,7 @@ window.addEventListener("DOMContentLoaded", () => {
       GRID = parseInt(
         optionForm.querySelector('[name="grid_size"]:checked')?.value
       );
+      board.parentElement.classList.remove(`disabled`);
 
       startGame(PLAYERS_COUNT, GRID);
     });
@@ -44,13 +48,13 @@ window.addEventListener("DOMContentLoaded", () => {
   });
 
   function startGame(PLAYERS_COUNT, GRID) {
-    const size = GRID * GRID;
+    GRID_SIZE = GRID * GRID;
 
     board.classList.add(`col-${GRID}`);
     CLICK_COUNT = 0;
     clearBoard();
     clearStack();
-    initBoard(size);
+    initBoard(GRID_SIZE);
     initPlayer(PLAYERS_COUNT);
   }
 
@@ -72,19 +76,36 @@ window.addEventListener("DOMContentLoaded", () => {
     const data = [...numArr, ...numArr];
 
     suffleArray(data);
+    addButtons(data);
+  }
 
+  function addButtons(data) {
     data.forEach((num, i) => {
       const button = document.createElement("button");
 
       button.addEventListener("click", (e) => {
+        let exitsInArray = false;
         button.innerHTML = num;
         button.classList.add("active");
         button.classList.add("disabled");
 
-        STACK.push({
+        const stackData = {
           num,
           index: i,
+        };
+
+        STACK.push(stackData);
+
+        CPU_MEMORY.forEach((memory) => {
+          if (memory.index == stackData.index && memory.num == stackData.num) {
+            exitsInArray = true;
+            return;
+          }
         });
+
+        if (!exitsInArray) {
+          updateCpuMemory(stackData);
+        }
 
         if (STACK.length == 2) {
           checkMatch();
@@ -97,63 +118,22 @@ window.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  function checkMatch() {
-    const currentPlayer = PLAYERS[CURRENT_PLAYER_ID - 1];
-    const elm1 = document.querySelector(
-      `.grid button:nth-child(${STACK[0].index + 1})`
-    );
-    const elm2 = document.querySelector(
-      `.grid button:nth-child(${STACK[1].index + 1})`
-    );
-
-    currentPlayer.num_of_click += 1;
-
-    if (STACK[0].num == STACK[1].num) {
-      elm1.classList.remove("active");
-      elm2.classList.remove("active");
-      elm1.classList.add("match");
-      elm2.classList.add("match");
-      clearStack();
-
-      currentPlayer.correct += 1;
-      calculateWinPercent(currentPlayer);
-      document.querySelector(
-        `.player[data-id="${CURRENT_PLAYER_ID}"] strong`
-      ).textContent = currentPlayer.correct;
-      checkOver();
-    } else {
-      board.classList.add("disabled");
-      setTimeout(() => {
-        elm1.innerHTML = "";
-        elm1.classList.remove("active");
-        elm1.classList.remove("disabled");
-        elm2.innerHTML = "";
-        elm2.classList.remove("active");
-        elm2.classList.remove("disabled");
-        clearStack();
-
-        currentPlayer.incorrect += 1;
-        calculateWinPercent(currentPlayer);
-        switchTurn();
-        board.classList.remove("disabled");
-      }, 1000);
-    }
-  }
-
   function calculateWinPercent(currentPlayer) {
     currentPlayer.correct_percent =
       (currentPlayer.correct / currentPlayer.num_of_click) * 100;
   }
 
-  function checkOver() {
+  function isOver() {
     const correctArr = PLAYERS.map((player) => player.correct);
     const totalCorrect = correctArr.reduce(
       (total, value, _i, arr) => total + value
     );
 
     if (totalCorrect == (GRID * GRID) / 2) {
-      showResult();
+      return true;
     }
+
+    return false;
   }
 
   function showResult() {
@@ -215,6 +195,135 @@ window.addEventListener("DOMContentLoaded", () => {
     document
       .querySelector(`.footer span:nth-child(${CURRENT_PLAYER_ID}`)
       .classList.add("active");
+
+    // Checking if Player name is CPU
+    checkIfCPU();
+  }
+
+  function checkIfCPU() {
+    if (PLAYERS[CURRENT_PLAYER_ID - 1].name == "CPU") {
+      board.parentElement.classList.add("disabled");
+
+      cpuTurn();
+    } else {
+      board.parentElement.classList.remove("disabled");
+    }
+  }
+
+  function cpuTurn() {
+    let cpuClickCount = 0;
+    const pairElements = checkPair();
+    const interval = setInterval(() => {
+      if (cpuClickCount == 1) {
+        let isFound = false;
+        let foundIndex = null;
+
+        CPU_MEMORY.forEach((memory, _i) => {
+          if (memory.num == STACK[0].num && memory.index != STACK[0].index) {
+            isFound = true;
+            foundIndex = memory.index;
+            CPU_MEMORY.splice(_i, 1);
+          }
+        });
+
+        if (isFound) {
+          cpuClick(foundIndex);
+        } else {
+          cpuClick();
+        }
+
+        clearInterval(interval);
+      } else {
+        cpuClick();
+        cpuClickCount += 1;
+      }
+    }, 500);
+    setTimeout(() => {
+      clearInterval(interval);
+    }, 1000);
+  }
+
+  function checkPair() {
+    const memory_nums = CPU_MEMORY.map((memory) => memory.num);
+    const memory_index = CPU_MEMORY.map((memory) => memory.index);
+
+    return [];
+  }
+
+  function checkMatch() {
+    const currentPlayer = PLAYERS[CURRENT_PLAYER_ID - 1];
+    const elm1 = document.querySelector(
+      `.grid button:nth-child(${STACK[0].index + 1})`
+    );
+    const elm2 = document.querySelector(
+      `.grid button:nth-child(${STACK[1].index + 1})`
+    );
+
+    currentPlayer.num_of_click += 1;
+
+    if (STACK[0].num == STACK[1].num) {
+      elm1.classList.remove("active");
+      elm2.classList.remove("active");
+      elm1.classList.add("match");
+      elm2.classList.add("match");
+      clearStack();
+
+      currentPlayer.correct += 1;
+      calculateWinPercent(currentPlayer);
+      document.querySelector(
+        `.player[data-id="${CURRENT_PLAYER_ID}"] strong`
+      ).textContent = currentPlayer.correct;
+      checkIfCPU();
+      if (isOver()) {
+        showResult();
+      }
+    } else {
+      board.classList.add("disabled");
+      setTimeout(() => {
+        elm1.innerHTML = "";
+        elm1.classList.remove("active");
+        elm1.classList.remove("disabled");
+        elm2.innerHTML = "";
+        elm2.classList.remove("active");
+        elm2.classList.remove("disabled");
+        clearStack();
+
+        currentPlayer.incorrect += 1;
+        calculateWinPercent(currentPlayer);
+        switchTurn();
+        board.classList.remove("disabled");
+      }, 1000);
+    }
+  }
+
+  function updateCpuMemory(data) {
+    CPU_MEMORY.push(data);
+  }
+
+  function cpuClick(index = null) {
+    if (isOver()) {
+      return;
+    }
+
+    if (index != null) {
+      const button = document.querySelector(
+        `.grid button:nth-child(${index + 1})`
+      );
+
+      if (button.classList.contains("disabled")) {
+        cpuClick();
+      } else {
+        button.click();
+      }
+    } else {
+      const buttons = document.querySelectorAll(
+        ".grid button:not(.active):not(.disabled)"
+      );
+
+      const cpu_click_element = getRandomNumber(buttons.length - 1);
+
+      buttons[cpu_click_element].click();
+    }
   }
 
   function suffleArray(arr) {
@@ -243,6 +352,20 @@ window.addEventListener("DOMContentLoaded", () => {
       incorrect: 0,
       correct_percent: 0,
     }));
+
+    if (playerCount == 1) {
+      IS_SOLO = true;
+      PLAYERS_COUNT += 1;
+
+      PLAYERS.push({
+        id: 2,
+        name: "CPU",
+        num_of_click: 0,
+        correct: 0,
+        incorrect: 0,
+        correct_percent: 0,
+      });
+    }
 
     footer.innerHTML = "";
 
